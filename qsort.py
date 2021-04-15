@@ -1,4 +1,5 @@
 from pprint import pprint
+from math import floor
 
 from typing import List,TypeVar,Callable
 from typing_extensions import TypedDict
@@ -15,7 +16,7 @@ def qsort(array:List[T],comparator:Comparator,start:int,end:int)->List[T]:
     if not start<end:
         return array
 
-    #TODO: pick pivot and place it into array[end]
+    medOfThree(array,comparator,start,end)
     newPivot:int=partition(array,comparator,start,end)
 
     qsort(array,comparator,start,newPivot-1)
@@ -40,6 +41,19 @@ def swap(array:List[T],index1:int,index2:int)->List[T]:
     temp:T=array[index1]
     array[index1]=array[index2]
     array[index2]=temp
+    return array
+
+def medOfThree(array:List[T],comparator:Comparator,start:int,end:int)->List[T]:
+    """performs medium of three, placing the new pivot in array[end]"""
+    mid:int=floor((start+end)/2)
+
+    if comparator(array[mid],array[start])<0:
+        swap(array,start,mid)
+    if comparator(array[end],array[start])<0:
+        swap(array,end,start)
+    if comparator(array[mid],array[end])<0:
+        swap(array,mid,end)
+
     return array
 
 if __name__=="__main__":
