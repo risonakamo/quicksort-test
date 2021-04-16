@@ -1,5 +1,6 @@
 from pprint import pprint
 from math import floor
+from numpy.random import randint
 
 from typing import List,TypeVar,Callable
 from typing_extensions import TypedDict
@@ -7,11 +8,11 @@ from typing_extensions import TypedDict
 T=TypeVar("T")
 Comparator=Callable[[T,T],int]
 
-def qsort1(array:List[T],comparator:Callable[[T,T],int])->List[T]:
+def qsort1(array:List[T],comparator:Callable[[T,T],int],partial:int=0)->List[T]:
     """bootstrap qsort"""
-    return qsort(array,comparator,0,len(array)-1)
+    return qsort(array,comparator,0,len(array)-1,partial)
 
-def qsort(array:List[T],comparator:Comparator,start:int,end:int)->List[T]:
+def qsort(array:List[T],comparator:Comparator,start:int,end:int,partial:int)->List[T]:
     """the qsort"""
     if not start<end:
         return array
@@ -19,8 +20,10 @@ def qsort(array:List[T],comparator:Comparator,start:int,end:int)->List[T]:
     medOfThree(array,comparator,start,end)
     newPivot:int=partition(array,comparator,start,end)
 
-    qsort(array,comparator,start,newPivot-1)
-    qsort(array,comparator,newPivot+1,end)
+    qsort(array,comparator,start,newPivot-1,partial)
+
+    if partial<=0 or newPivot<partial-1:
+        qsort(array,comparator,newPivot+1,end,partial)
 
     return array
 
@@ -72,6 +75,7 @@ if __name__=="__main__":
     example:List[int]=[4,3,7,2,9,1,8,8,5]
     example2:List[int]=[1,2,3,4]
     example3:List[int]=[4,1,3,2]
+    example4:List[int]=randint(0,100,20)
 
     def convertToThingList(array:List[int])->List[TestThing]:
         def convertToThing(num:int)->TestThing:
@@ -87,3 +91,5 @@ if __name__=="__main__":
     pprint(qsort1(convertToThingList(example2),thingCompare))
     print()
     pprint(qsort1(convertToThingList(example3),thingCompare))
+    print()
+    pprint(qsort1(convertToThingList(example4),thingCompare,3))
